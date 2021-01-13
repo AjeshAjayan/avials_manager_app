@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "870519674807",
+    "project_id": "avials-fcm",
+    "storage_bucket": "avials-fcm.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:870519674807:android:250e507b1b2012764e3a32",
+        "android_client_info": {
+          "package_name": "com.avials.avilas_manager_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "870519674807-ptrvnejst1a7aj9pk6kphemo2lnplq43.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDpFxIoPcTqhyGgLFXj8S1Lb7xbUZjCOhE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "870519674807-ptrvnejst1a7aj9pk6kphemo2lnplq43.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
