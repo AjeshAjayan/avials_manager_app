@@ -233,7 +233,7 @@ class _OrdersState extends State<Orders> with TickerProviderStateMixin {
                 RaisedButton(
                   color: Theme.of(context).buttonColor,
                   onPressed: () {
-                    // TODO
+                    showDialog(context: context, builder: (_) => AvialsManagerTheme.buildOnDevelopmentAlert(context));
                   },
                   child: Text('Directions'),
                 ),

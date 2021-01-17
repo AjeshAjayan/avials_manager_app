@@ -16,7 +16,7 @@ class ShopProducts extends StatefulWidget {
 }
 
 class _ShopProductsState extends State<ShopProducts> {
-  List<Map> _list = [
+  List<Map<String, dynamic>> _list = [
     {
       'productId': 1,
       'customer': 'CUS ONE',
@@ -85,10 +85,10 @@ class _ShopProductsState extends State<ShopProducts> {
     }
   ];
   
-  void _handleShopProductClick(int productId) {
+  void _handleShopProductClick(Map<String, dynamic> productDetails) {
     MyHomePage.navBodyChange.value = ShopProductDetails(
       animation: widget.animation,
-      shopProductId: productId,
+      productDetails: productDetails,
     );
   }
 
@@ -98,7 +98,7 @@ class _ShopProductsState extends State<ShopProducts> {
         delegate: SliverChildBuilderDelegate((context, i) {
           return InkWell(
             splashColor: Theme.of(context).accentColor,
-            onTap: () => _handleShopProductClick(_list[i]['productId']),
+            onTap: () => _handleShopProductClick(_list[i]),
             child: Card(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
