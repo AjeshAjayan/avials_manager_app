@@ -127,6 +127,16 @@ class _ShopProductDetailsState extends State<ShopProductDetails> {
     ));
 
     listItems.add(_buildShopDetailsCard(
+      Icon(Icons.money),
+      'Price: 150',
+    ));
+
+    listItems.add(_buildShopDetailsCard(
+      Icon(Icons.inventory),
+      'Bal stock: 20',
+    ));
+
+    listItems.add(_buildShopDetailsCard(
       Icon(Icons.next_plan),
       'Plan: Premium',
     ));
