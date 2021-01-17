@@ -1,11 +1,16 @@
 import 'package:avilas_manager_app/avials-manager-theme.dart';
 import 'package:avilas_manager_app/generic-widgets/A_Animation1.dart';
+import 'package:avilas_manager_app/nav-body-widgets/shop-details.dart';
+import 'package:avilas_manager_app/nav-body-widgets/shop-product-details.dart';
+import 'package:avilas_manager_app/nav-body-widgets/shops.dart';
+import 'package:avilas_manager_app/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 
 class ShopProducts extends StatefulWidget {
   final Animation animation;
+  final Map<String, dynamic> shopDetails;
 
-  ShopProducts({this.animation});
+  ShopProducts({this.animation, this.shopDetails});
   @override
   _ShopProductsState createState() => _ShopProductsState();
 }
@@ -13,6 +18,7 @@ class ShopProducts extends StatefulWidget {
 class _ShopProductsState extends State<ShopProducts> {
   List<Map> _list = [
     {
+      'productId': 1,
       'customer': 'CUS ONE',
       'product': 'PROD ONE',
       'productImage':
@@ -23,6 +29,7 @@ class _ShopProductsState extends State<ShopProducts> {
       'place': 'PLACE ONE',
     },
     {
+      'productId': 1,
       'customer': 'CUS ONE',
       'product': 'PROD ONE',
       'productImage':
@@ -33,6 +40,7 @@ class _ShopProductsState extends State<ShopProducts> {
       'place': 'PLACE ONE',
     },
     {
+      'productId': 1,
       'customer': 'CUS ONE',
       'product': 'PROD ONE',
       'productImage':
@@ -43,6 +51,7 @@ class _ShopProductsState extends State<ShopProducts> {
       'place': 'PLACE ONE',
     },
     {
+      'productId': 1,
       'customer': 'CUS ONE',
       'product': 'PROD ONE',
       'productImage':
@@ -53,6 +62,7 @@ class _ShopProductsState extends State<ShopProducts> {
       'place': 'PLACE ONE',
     },
     {
+      'productId': 1,
       'customer': 'CUS ONE',
       'product': 'PROD ONE',
       'productImage':
@@ -63,6 +73,7 @@ class _ShopProductsState extends State<ShopProducts> {
       'place': 'PLACE ONE',
     },
     {
+      'productId': 1,
       'customer': 'CUS ONE',
       'product': 'PROD ONE',
       'productImage':
@@ -73,13 +84,21 @@ class _ShopProductsState extends State<ShopProducts> {
       'place': 'PLACE ONE',
     }
   ];
+  
+  void _handleShopProductClick(int productId) {
+    MyHomePage.navBodyChange.value = ShopProductDetails(
+      animation: widget.animation,
+      shopProductId: productId,
+    );
+  }
 
-  Widget _buildOrderList() {
+  Widget _buildShopProductList() {
     return CustomScrollView(slivers: [
       SliverList(
         delegate: SliverChildBuilderDelegate((context, i) {
           return InkWell(
-            onTap: () => {},
+            splashColor: Theme.of(context).accentColor,
+            onTap: () => _handleShopProductClick(_list[i]['productId']),
             child: Card(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -87,9 +106,10 @@ class _ShopProductsState extends State<ShopProducts> {
                   Flexible(
                     child: Container(
                       padding: EdgeInsets.all(5),
-                      child: Image(
-                        image:
-                            NetworkImage(_list[i]['productImage'], scale: 10),
+                      child: FadeInImage.assetNetwork(
+                        placeholder: 'assets/images/loading.gif',
+                        image: _list[i]['productImage'],
+                        imageScale: 10,
                       ),
                     ),
                   ),
@@ -153,6 +173,13 @@ class _ShopProductsState extends State<ShopProducts> {
     ]);
   }
 
+  void _backButtonCallBack() {
+    MyHomePage.navBodyChange.value = ShopDetails(
+      animation: widget.animation,
+      shopDetails: widget.shopDetails,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return A_Animation1(
@@ -163,12 +190,13 @@ class _ShopProductsState extends State<ShopProducts> {
             widthFactor: AvialsManagerTheme.bodyWidthFactor,
             child: Column(
               children: [
-                AvialsManagerTheme.buildBodyHeader(
+                AvialsManagerTheme.buildBodyHeaderWithBackButton(
                   context,
                   'Shop products',
                   Icon(Icons.shopping_cart),
+                  _backButtonCallBack,
                 ),
-                Expanded(child: _buildOrderList()),
+                Expanded(child: _buildShopProductList()),
               ],
             ),
           ),

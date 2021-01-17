@@ -1,24 +1,61 @@
-import 'package:avilas_manager_app/generic-widgets/A_Animation1.dart';
 import 'package:flutter/material.dart';
 
-class Sample extends StatefulWidget {
-  final Animation animation;
+void main() => runApp(SilverAppBarExample());
 
-  Sample({this.animation});
-  @override
-  _SampleState createState() => _SampleState();
-}
-
-class _SampleState extends State<Sample> {
+class SilverAppBarExample extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return A_Animation1(
-      animation: widget.animation,
-      child: Container(
-        child: Center(
-          child: Text('Delivery'),
+    return MaterialApp(
+      home: Scaffold(
+        body: CustomScrollView(
+          slivers: <Widget>[
+            SliverAppBar(
+              leading: IconButton(
+                  icon: Icon(Icons.filter_1),
+                  onPressed: () {
+                    // Do something
+                  }
+              ),
+              expandedHeight: 220.0,
+              floating: true,
+              pinned: true,
+              snap: true,
+              elevation: 50,
+              backgroundColor: Colors.pink,
+              flexibleSpace: FlexibleSpaceBar(
+                  centerTitle: true,
+                  title: Text('Title',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16.0,
+                      )),
+                  background: Image.network(
+                    'https://images.pexels.com/photos/443356/pexels-photo-443356.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940',
+                    fit: BoxFit.cover,
+                  )
+              ),
+            ),
+            new SliverList(
+                delegate: new SliverChildListDelegate(_buildList(50))
+            ),
+          ],
         ),
       ),
     );
+  }
+
+  List _buildList(int count) {
+    List<Widget> listItems = List();
+
+    for (int i = 0; i < count; i++) {
+      listItems.add(new Padding(padding: new EdgeInsets.all(20.0),
+          child: new Text(
+              'Item ${i.toString()}',
+              style: new TextStyle(fontSize: 25.0)
+          )
+      ));
+    }
+
+    return listItems;
   }
 }

@@ -1,4 +1,5 @@
-import 'package:avilas_manager_app/nav-body-widgets/Profile.dart';
+import 'package:avilas_manager_app/avials-manager-theme.dart';
+import 'package:avilas_manager_app/nav-body-widgets/profile.dart';
 import 'package:avilas_manager_app/nav-body-widgets/delivery.dart';
 import 'package:avilas_manager_app/nav-body-widgets/orders.dart';
 import 'package:avilas_manager_app/nav-body-widgets/shops.dart';
@@ -19,10 +20,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   AnimationController _animationController;
   Animation _animation;
   Widget _navBody;
-
-  void _navBodyChangeListener() {
-    _changeNavBody(MyHomePage.navBodyChange.value);
-  }
+  bool _showFloatingButton = false;
 
   @override
   void initState() {
@@ -55,61 +53,43 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     super.initState();
   }
 
-  void _handleNavClick(int index) {
-    if (_currentIndex == index) return;
-    _currentIndex = index;
-    switch (index) {
-      case 0:
-        _changeNavBody(Orders(
-          animation: _animation,
-        ));
-        break;
-      case 1:
-        _changeNavBody(Shops(
-          animation: _animation,
-        ));
-        break;
-      case 2:
-        _changeNavBody(Delivery(
-          animation: _animation,
-        ));
-        break;
-      case 3:
-        _changeNavBody(Profile(
-          animation: _animation,
-        ));
-        break;
-    }
-  }
-
-  Future<void> _changeNavBody(Widget widget) async {
-    await this._animationController.reverse();
-    setState(() {
-      this._animationController.forward();
-      _navBody = widget;
-    });
-    return;
-  }
-
   @override
-  void dispose() {
-    _animationController.dispose();
-    super.dispose();
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Avials - Manager'),
+        elevation: 5,
+        actions: [_appBarNotification()],
+      ),
+      body: _navBody,
+      bottomNavigationBar: _buildBottomNav(),
+      floatingActionButton: Visibility(
+        visible: _showFloatingButton,
+        child: FloatingActionButton(
+          onPressed: () {},
+          child: Icon(Icons.add),
+        ),
+      ), // This trailing comma makes auto-formatting nicer for build methods.
+    );
   }
 
   Widget _appBarNotification() {
-    return Padding(
-      padding: const EdgeInsets.only(right: 15.0),
-      child: Badge(
-        toAnimate: true,
-        elevation: 5,
-        animationType: BadgeAnimationType.slide,
-        animationDuration: const Duration(milliseconds: 800),
-        position: BadgePosition.topEnd(top: 5, end: -6),
-        badgeColor: Theme.of(context).accentColor,
-        badgeContent: Text('5', style: Theme.of(context).textTheme.subtitle1),
-        showBadge: MyHomePage.showBadge.value,
-        child: Icon(Icons.notifications),
+    return InkWell(
+      onTap: _handleNotificationClick,
+      borderRadius: AvialsManagerTheme.splashRadius,
+      child: Padding(
+        padding: const EdgeInsets.only(right: 15.0),
+        child: Badge(
+          toAnimate: true,
+          elevation: 5,
+          animationType: BadgeAnimationType.slide,
+          animationDuration: const Duration(milliseconds: 800),
+          position: BadgePosition.topEnd(top: 5, end: -6),
+          badgeColor: Theme.of(context).accentColor,
+          badgeContent: Text('5', style: Theme.of(context).textTheme.subtitle1),
+          showBadge: MyHomePage.showBadge.value,
+          child: Icon(Icons.notifications),
+        ),
       ),
     );
   }
@@ -140,20 +120,61 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     );
   }
 
+  Future<void> _changeNavBody(Widget widget) async {
+    await this._animationController.reverse();
+    setState(() {
+      this._animationController.forward();
+      _navBody = widget;
+      _showFloatingButton = false;
+    });
+    return;
+  }
+
+  void _handleNavClick(int index) {
+    if (_currentIndex == index) return;
+    _currentIndex = index;
+
+    switch (index) {
+      case 0:
+        _changeNavBody(Orders(
+          animation: _animation,
+        ));
+        break;
+      case 1:
+        _changeNavBody(Shops(
+          animation: _animation,
+        ));
+        break;
+      case 2:
+        _changeNavBody(Delivery(
+          animation: _animation,
+        )).then((value) => _handleFloatingButtonVisibility(false));
+        break;
+      case 3:
+        _changeNavBody(Profile(
+          animation: _animation,
+        ));
+        break;
+    }
+  }
+
+  void _handleFloatingButtonVisibility(bool value) {
+    setState(() {
+      _showFloatingButton = value;
+    });
+  }
+
+  void _navBodyChangeListener() {
+    _changeNavBody(MyHomePage.navBodyChange.value);
+  }
+
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Avials - Manager'),
-        elevation: 5,
-        actions: [_appBarNotification()],
-      ),
-      body: _navBody,
-      bottomNavigationBar: _buildBottomNav(),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
-    );
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  void _handleNotificationClick() {
+    showDialog(context: context, builder: (_) => AvialsManagerTheme.buildOnDevelopmentAlert(context));
   }
 }

@@ -1,6 +1,7 @@
 import 'package:avilas_manager_app/avials-manager-theme.dart';
 import 'package:avilas_manager_app/generic-widgets/A_Animation1.dart';
-import 'package:avilas_manager_app/nav-body-widgets/shop-product.dart';
+import 'package:avilas_manager_app/nav-body-widgets/shop-details.dart';
+import 'package:avilas_manager_app/nav-body-widgets/shop-products.dart';
 import 'package:avilas_manager_app/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -13,12 +14,12 @@ class Shops extends StatefulWidget {
 }
 
 class _ShopsState extends State<Shops> {
-  List<Map> _list = [
+  List<Map<String, dynamic>> _list = [
     {
       'shop_name': 'SHOP ONE',
       'date_of_join': '5/12/2020',
       'shop_image':
-      'https://hbr.org/resources/images/article_assets/2019/11/Nov19_14_sb10067951dd-001.jpg',
+          'https://hbr.org/resources/images/article_assets/2019/11/Nov19_14_sb10067951dd-001.jpg',
       'is_expired': false,
       'is_closed': false,
     },
@@ -26,7 +27,7 @@ class _ShopsState extends State<Shops> {
       'shop_name': 'SHOP TWO',
       'date_of_join': '5/12/2020',
       'shop_image':
-      'https://hbr.org/resources/images/article_assets/2019/11/Nov19_14_sb10067951dd-001.jpg',
+          'https://hbr.org/resources/images/article_assets/2019/11/Nov19_14_sb10067951dd-001.jpg',
       'is_expired': false,
       'is_closed': false,
     },
@@ -34,7 +35,7 @@ class _ShopsState extends State<Shops> {
       'shop_name': 'SHOP TWO',
       'date_of_join': '5/12/2020',
       'shop_image':
-      'https://hbr.org/resources/images/article_assets/2019/11/Nov19_14_sb10067951dd-001.jpg',
+          'https://hbr.org/resources/images/article_assets/2019/11/Nov19_14_sb10067951dd-001.jpg',
       'is_expired': false,
       'is_closed': false,
     },
@@ -42,15 +43,16 @@ class _ShopsState extends State<Shops> {
       'shop_name': 'SHOP FOUR',
       'date_of_join': '5/12/2020',
       'shop_image':
-      'https://hbr.org/resources/images/article_assets/2019/11/Nov19_14_sb10067951dd-001.jpg',
+          'https://hbr.org/resources/images/article_assets/2019/11/Nov19_14_sb10067951dd-001.jpg',
       'is_expired': false,
       'is_closed': false,
     },
   ];
 
-  void _shopOnTap() {
-    MyHomePage.navBodyChange.value = ShopProducts(
+  void _shopOnTap(Map<String, dynamic> shopDetails) {
+    MyHomePage.navBodyChange.value = ShopDetails(
       animation: widget.animation,
+      shopDetails: shopDetails,
     );
   }
 
@@ -59,7 +61,8 @@ class _ShopsState extends State<Shops> {
       SliverList(
         delegate: SliverChildBuilderDelegate((context, i) {
           return InkWell(
-            onTap: _shopOnTap,
+            splashColor: Theme.of(context).accentColor,
+            onTap: () => _shopOnTap(_list[i]),
             child: Card(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -67,8 +70,10 @@ class _ShopsState extends State<Shops> {
                   Flexible(
                     child: Container(
                       padding: EdgeInsets.all(5),
-                      child: Image(
-                        image: NetworkImage(_list[i]['shop_image'], scale: 10),
+                      child: FadeInImage.assetNetwork(
+                        placeholder: 'assets/images/loading.gif',
+                        image: _list[i]['shop_image'],
+                        imageScale: 10,
                       ),
                     ),
                   ),

@@ -1,19 +1,22 @@
 import 'package:avilas_manager_app/avials-manager-theme.dart';
 import 'package:avilas_manager_app/generic-widgets/A_Animation1.dart';
+import 'package:avilas_manager_app/nav-body-widgets/shop-details.dart';
+import 'package:avilas_manager_app/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 
-class Orders extends StatefulWidget {
+class ShopOrders extends StatefulWidget {
   final Animation animation;
+  final Map<String, dynamic> shopDetails;
 
-  Orders({this.animation});
+  ShopOrders({this.animation, this.shopDetails});
 
   @override
-  _OrdersState createState() => _OrdersState();
+  _ShopOrdersState createState() => _ShopOrdersState();
 }
 
-class _OrdersState extends State<Orders> with TickerProviderStateMixin {
+class _ShopOrdersState extends State<ShopOrders> with TickerProviderStateMixin {
   Map _selected;
   bool _isDelivered = false;
   bool _isProcessed = false;
@@ -23,7 +26,7 @@ class _OrdersState extends State<Orders> with TickerProviderStateMixin {
 
   Animation _openPreviewAnimation;
 
-  List<Map<String, dynamic>> _list = [
+  List<Map> _list = [
     {
       'customer': 'CUS ONE',
       'product': 'PROD ONE',
@@ -110,10 +113,11 @@ class _OrdersState extends State<Orders> with TickerProviderStateMixin {
           widthFactor: AvialsManagerTheme.bodyWidthFactor,
           child: Column(
             children: [
-              AvialsManagerTheme.buildBodyHeader(
+              AvialsManagerTheme.buildBodyHeaderWithBackButton(
                 context,
-                'Orders',
+                'Orders (${widget.shopDetails['shop_name'] ?? ''})',
                 Icon(Icons.shopping_bag_outlined),
+                _backButtonCallBack,
               ),
               Flexible(
                 flex: 2,
@@ -138,10 +142,13 @@ class _OrdersState extends State<Orders> with TickerProviderStateMixin {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Flexible(
-                    child: FadeInImage.assetNetwork(
-                      placeholder: 'assets/images/loading.gif',
-                      image: _list[i]['productImage'],
-                      imageScale: 10,
+                    child: Container(
+                      padding: EdgeInsets.all(5),
+                      child: FadeInImage.assetNetwork(
+                        placeholder: 'assets/images/loading.gif',
+                        image: _list[i]['productImage'],
+                        imageScale: 10,
+                      ),
                     ),
                   ),
                   Flexible(
@@ -213,10 +220,9 @@ class _OrdersState extends State<Orders> with TickerProviderStateMixin {
             flex: 1,
             child: AspectRatio(
               aspectRatio: 1,
-              child: FadeInImage.assetNetwork(
-                placeholder: 'assets/images/loading.gif',
-                image: _selected['productImage'],
-                imageScale: 10,
+              child: Image(
+                fit: BoxFit.cover,
+                image: NetworkImage(_selected['productImage']),
               ),
             ),
           ),
@@ -296,6 +302,13 @@ class _OrdersState extends State<Orders> with TickerProviderStateMixin {
     showBottomSheet(
       context: context,
       builder: (_) => _buildSelectPreView(),
+    );
+  }
+
+  void _backButtonCallBack() {
+    MyHomePage.navBodyChange.value = ShopDetails(
+      animation: widget.animation,
+      shopDetails: widget.shopDetails,
     );
   }
 
