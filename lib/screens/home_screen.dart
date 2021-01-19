@@ -3,13 +3,14 @@ import 'package:avilas_manager_app/nav-body-widgets/profile.dart';
 import 'package:avilas_manager_app/nav-body-widgets/delivery.dart';
 import 'package:avilas_manager_app/nav-body-widgets/orders.dart';
 import 'package:avilas_manager_app/nav-body-widgets/shops.dart';
-import 'package:avilas_manager_app/notification-helper.dart';
+import 'package:avilas_manager_app/helpers/notification-helper.dart';
 import 'package:flutter/material.dart';
 import 'package:badges/badges.dart';
 
 class MyHomePage extends StatefulWidget {
   static ValueNotifier navBodyChange = new ValueNotifier<Widget>(null);
   static ValueNotifier showBadge = new ValueNotifier<bool>(true);
+  static ValueNotifier showLoading = new ValueNotifier<bool>(false);
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
@@ -61,7 +62,15 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         elevation: 5,
         actions: [_appBarNotification()],
       ),
-      body: _navBody,
+      body: Stack(
+        children: [
+          Visibility(
+            visible: MyHomePage.showLoading.value,
+            child: LinearProgressIndicator(),
+          ),
+          _navBody ?? Container(),
+        ],
+      ),
       bottomNavigationBar: _buildBottomNav(),
       floatingActionButton: Visibility(
         visible: _showFloatingButton,
@@ -86,7 +95,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
           animationDuration: const Duration(milliseconds: 800),
           position: BadgePosition.topEnd(top: 5, end: -6),
           badgeColor: Theme.of(context).accentColor,
-          badgeContent: Text('5', style: Theme.of(context).textTheme.subtitle1),
+          badgeContent: Text('5', style: Theme.of(context).textTheme.subtitle2),
           showBadge: MyHomePage.showBadge.value,
           child: Icon(Icons.notifications),
         ),
@@ -175,6 +184,8 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   }
 
   void _handleNotificationClick() {
-    showDialog(context: context, builder: (_) => AvialsManagerTheme.buildOnDevelopmentAlert(context));
+    showDialog(
+        context: context,
+        builder: (_) => AvialsManagerTheme.buildOnDevelopmentAlert(context));
   }
 }

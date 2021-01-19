@@ -84,7 +84,32 @@ class _ShopProductsState extends State<ShopProducts> {
       'place': 'PLACE ONE',
     }
   ];
-  
+
+  @override
+  Widget build(BuildContext context) {
+    return A_Animation1(
+      animation: widget.animation,
+      child: Container(
+        child: Center(
+          child: FractionallySizedBox(
+            widthFactor: AvialsManagerTheme.bodyWidthFactor,
+            child: Column(
+              children: [
+                AvialsManagerTheme.buildBodyHeaderWithBackButton(
+                  context,
+                  'Shop products',
+                  Icon(Icons.shopping_cart),
+                  _backButtonCallBack,
+                ),
+                Expanded(child: _buildShopProductList()),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   void _handleShopProductClick(Map<String, dynamic> productDetails) {
     MyHomePage.navBodyChange.value = ShopProductDetails(
       animation: widget.animation,
@@ -177,31 +202,6 @@ class _ShopProductsState extends State<ShopProducts> {
     MyHomePage.navBodyChange.value = ShopDetails(
       animation: widget.animation,
       shopDetails: widget.shopDetails,
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return A_Animation1(
-      animation: widget.animation,
-      child: Container(
-        child: Center(
-          child: FractionallySizedBox(
-            widthFactor: AvialsManagerTheme.bodyWidthFactor,
-            child: Column(
-              children: [
-                AvialsManagerTheme.buildBodyHeaderWithBackButton(
-                  context,
-                  'Shop products',
-                  Icon(Icons.shopping_cart),
-                  _backButtonCallBack,
-                ),
-                Expanded(child: _buildShopProductList()),
-              ],
-            ),
-          ),
-        ),
-      ),
     );
   }
 }

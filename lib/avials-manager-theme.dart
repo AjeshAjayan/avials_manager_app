@@ -151,7 +151,8 @@ class AvialsManagerTheme {
     textTheme: TextTheme(
       bodyText1: TextStyle(color: new Color(0xFF212121)),
       bodyText2: TextStyle(color: new Color(0xFF212121)),
-      subtitle1: TextStyle(color: new Color(0xFFffffff)),
+      subtitle1: TextStyle(color: new Color(0xFF000000)),
+      subtitle2: TextStyle(color: new Color(0xFFFFFFFF)),
       headline1: TextStyle(
           fontSize: 18, color: Color(0XFF1a1919), fontWeight: FontWeight.w500),
     ),
