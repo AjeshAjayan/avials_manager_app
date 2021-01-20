@@ -12,7 +12,7 @@ FormatDef _$FormatDefFromJson(Map<String, dynamic> json) {
     json['height'] as int,
     json['width'] as int,
     json['url'] as String,
-    json['size'] as int,
+    (json['size'] as num)?.toDouble(),
     json['path'] as String,
     json['name'] as String,
     json['hash'] as String,

@@ -13,15 +13,6 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
-  Map<String, dynamic> _user = {
-    'fullname': 'Ajesh Ajayan',
-    'place': 'Umayanalloor',
-    'date_of_birth': '19/09/1997',
-    'date_of_joining': '1/1/2021',
-    'is_verified': true,
-    'managers_assigned_places': 'Umayanalloor, Paravoor',
-    'profile_pic': 'https://avatarfiles.alphacoders.com/152/thumb-152197.png'
-  };
 
   _joinPlaceNames() {
     String placeNames = '';
@@ -53,7 +44,7 @@ class _ProfileState extends State<Profile> {
                     radius: 50,
                     backgroundImage: FadeInImage.assetNetwork(
                       placeholder: AvialsManagerTheme.imageLoadingPlaceHolder,
-                      image: _user['profile_pic'],
+                      image: UserData.manager.profile_pic.formats.thumbnail.url ?? '',
                     ).image,
                   ),
                 ),

@@ -21,7 +21,7 @@ class FormatDef {
   String mime;
   String name;
   String path;
-  int size;
+  double size;
   int width;
   int height;
 

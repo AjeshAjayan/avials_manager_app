@@ -134,8 +134,6 @@ class LoginScreen extends StatelessWidget {
         context: context,
       );
 
-      print(managerRes.body);
-
       Manager manager = Manager.fromJson(jsonDecode(managerRes.body)[0]);
 
       await storage.write(key: 'userData', value: jsonEncode(manager.toJson()));
