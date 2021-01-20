@@ -1,4 +1,5 @@
 import 'package:avilas_manager_app/avials-manager-theme.dart';
+import 'package:avilas_manager_app/data_keepers/user_data.dart';
 import 'package:avilas_manager_app/generic-widgets/A_Animation1.dart';
 import 'package:flutter/material.dart';
 
@@ -21,6 +22,14 @@ class _ProfileState extends State<Profile> {
     'managers_assigned_places': 'Umayanalloor, Paravoor',
     'profile_pic': 'https://avatarfiles.alphacoders.com/152/thumb-152197.png'
   };
+
+  _joinPlaceNames() {
+    String placeNames = '';
+    for(int i = 0; i < UserData.manager.places.length; i ++) {
+      placeNames = placeNames + '${UserData.manager.places[i].title ?? ''}, ';
+    }
+    return placeNames;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,18 +57,18 @@ class _ProfileState extends State<Profile> {
                     ).image,
                   ),
                 ),
-                _buildCardView(_user['fullname'], const Icon(Icons.person)),
-                _buildCardView(_user['place'], const Icon(Icons.location_on)),
-                _buildCardView('DOB: ' + _user['date_of_birth'],
+                _buildCardView(UserData.manager.fullname, const Icon(Icons.person)),
+                _buildCardView(UserData.manager.place.title, const Icon(Icons.location_on)),
+                _buildCardView('DOB: ' + UserData.manager.date_of_birth,
                     const Icon(Icons.calendar_today)),
-                _buildCardView('DOJ: ' + _user['date_of_birth'],
+                _buildCardView('DOJ: ' + UserData.manager.date_of_joining,
                     const Icon(Icons.calendar_today)),
                 _buildCardView(
-                  _user['is_verified'] ? 'Verified' : 'Not Verified',
+                  UserData.manager.is_verified ? 'Verified' : 'Not Verified',
                   const Icon(Icons.verified),
                 ),
                 _buildCardView(
-                  'Assigned places:\n' + _user['managers_assigned_places'],
+                  'Assigned places:\n' + _joinPlaceNames(),
                   const Icon(Icons.place_outlined),
                 ),
               ],

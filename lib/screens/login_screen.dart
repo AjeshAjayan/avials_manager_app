@@ -1,6 +1,8 @@
 import 'dart:convert';
+import 'package:avilas_manager_app/data_keepers/user_data.dart';
 import 'package:avilas_manager_app/helpers/toster.dart';
 import 'package:avilas_manager_app/helpers/http.dart';
+import 'package:avilas_manager_app/models/manager.dart';
 import 'package:avilas_manager_app/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -120,10 +122,31 @@ class LoginScreen extends StatelessWidget {
     });
     response = jsonDecode(response.body);
     if(response['jwt'] != null && response['jwt'] != '') {
+
+      // get manager's info by user id
+      final userId = response['user']['id'];
+
+      await storage.write(key: 'accessToken', value: response['jwt']);
+
+      var managerRes = await _http.get(
+        url: 'managers/user/$userId',
+        body: {},
+        context: context,
+      );
+
+      print(managerRes.body);
+
+      Manager manager = Manager.fromJson(jsonDecode(managerRes.body)[0]);
+
+      await storage.write(key: 'userData', value: jsonEncode(manager.toJson()));
+
+      UserData.manager = manager;
+
+
+
       if(FocusScope.of(context).isFirstFocus) {
         FocusScope.of(context).requestFocus(new FocusNode());
       }
-      storage.write(key: 'accessToken', value: response['jwt']);
       Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (_) => MyHomePage()));
     } else {
