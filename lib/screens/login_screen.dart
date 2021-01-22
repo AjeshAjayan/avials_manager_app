@@ -113,7 +113,7 @@ class LoginScreen extends StatelessWidget {
     MyHomePage.showLoading.value = true;
     final FormState form = _formKey.currentState;
     final FlutterSecureStorage storage = new FlutterSecureStorage();
-    if(!form.validate()) {
+    if (!form.validate()) {
       return;
     }
     dynamic response = await _http.postNoAuth(url: 'auth/local', body: {
@@ -121,8 +121,7 @@ class LoginScreen extends StatelessWidget {
       'password': _formControls['password'].text,
     });
     response = jsonDecode(response.body);
-    if(response['jwt'] != null && response['jwt'] != '') {
-
+    if (response['jwt'] != null && response['jwt'] != '') {
       // get manager's info by user id
       final userId = response['user']['id'];
 
@@ -140,15 +139,14 @@ class LoginScreen extends StatelessWidget {
 
       UserData.manager = manager;
 
-
-
-      if(FocusScope.of(context).isFirstFocus) {
+      if (FocusScope.of(context).isFirstFocus) {
         FocusScope.of(context).requestFocus(new FocusNode());
       }
       Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (_) => MyHomePage()));
     } else {
-      Toster.showToster(context: context, msg: 'Identifier or password invalid invalid');
+      Toster.showToster(
+          context: context, msg: 'Identifier or password invalid invalid');
     }
     MyHomePage.showLoading.value = false;
   }
