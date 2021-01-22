@@ -1,8 +1,12 @@
+import 'dart:convert';
+
+import 'package:avilas_manager_app/apis/get_orders.dart';
 import 'package:avilas_manager_app/avials-manager-theme.dart';
 import 'package:avilas_manager_app/generic-widgets/A_Animation1.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 class Orders extends StatefulWidget {
   final Animation animation;
@@ -22,6 +26,11 @@ class _OrdersState extends State<Orders> with TickerProviderStateMixin {
   AnimationController _animationController;
 
   Animation _openPreviewAnimation;
+
+  static const _pageSize = 20;
+
+  final PagingController<int, dynamic> _pagingController =
+      PagingController(firstPageKey: 0);
 
   List<Map<String, dynamic>> _list = [
     {
@@ -98,6 +107,10 @@ class _OrdersState extends State<Orders> with TickerProviderStateMixin {
       end: 1.0,
     ).animate(CurvedAnimation(
         parent: _animationController, curve: Curves.fastOutSlowIn));
+
+    _pagingController.addPageRequestListener((pageKey) {
+      _fetchPage(pageKey);
+    });
     super.initState();
   }
 
@@ -127,9 +140,10 @@ class _OrdersState extends State<Orders> with TickerProviderStateMixin {
   }
 
   Widget _buildOrderList() {
-    return CustomScrollView(slivers: [
-      SliverList(
-        delegate: SliverChildBuilderDelegate((context, i) {
+    return PagedListView<int, dynamic>(
+      pagingController: _pagingController,
+      builderDelegate: PagedChildBuilderDelegate<dynamic>(
+        itemBuilder: (context, item, i) {
           return InkWell(
             splashColor: Theme.of(context).accentColor,
             onTap: () => _setPreview(i),
@@ -199,9 +213,9 @@ class _OrdersState extends State<Orders> with TickerProviderStateMixin {
               ),
             ),
           );
-        }, childCount: _list.length),
+        }
       ),
-    ]);
+    );
   }
 
   Widget _buildSelectPreView() {
@@ -233,7 +247,11 @@ class _OrdersState extends State<Orders> with TickerProviderStateMixin {
                 RaisedButton(
                   color: Theme.of(context).buttonColor,
                   onPressed: () {
-                    showDialog(context: context, builder: (_) => AvialsManagerTheme.buildOnDevelopmentAlert(context));
+                    showDialog(
+                        context: context,
+                        builder: (_) =>
+                            AvialsManagerTheme.buildOnDevelopmentAlert(
+                                context));
                   },
                   child: Text('Directions'),
                 ),
@@ -286,6 +304,22 @@ class _OrdersState extends State<Orders> with TickerProviderStateMixin {
         ],
       ),
     );
+  }
+
+  Future<void> _fetchPage(int pageKey) async {
+    try {
+      final newItems = await getOrders(context);
+      final isLastPage = newItems.length < _pageSize;
+      if (isLastPage) {
+        _pagingController.appendLastPage(newItems);
+      } else {
+        final nextPageKey = pageKey + newItems.length;
+        _pagingController.appendPage(newItems, nextPageKey);
+      }
+    } catch (error) {
+      print(error);
+      _pagingController.error = error;
+    }
   }
 
   void _setPreview(int i) {

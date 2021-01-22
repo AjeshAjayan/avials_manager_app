@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:avilas_manager_app/apis/getUserInfo.dart';
+import 'package:avilas_manager_app/apis/get_user_info.dart';
 import 'package:avilas_manager_app/avials-manager-theme.dart';
 import 'package:avilas_manager_app/data_keepers/user_data.dart';
 import 'package:avilas_manager_app/generic-widgets/A_Animation1.dart';
