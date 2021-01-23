@@ -1,4 +1,3 @@
-import 'package:avilas_manager_app/models/image_format_def.dart';
 import 'package:avilas_manager_app/models/image_formats.dart';
 import 'package:json_annotation/json_annotation.dart';
 part 'image_format.g.dart';

@@ -1,8 +1,8 @@
-import 'dart:convert';
-
+import 'package:intl/intl.dart';
 import 'package:avilas_manager_app/apis/get_orders.dart';
 import 'package:avilas_manager_app/avials-manager-theme.dart';
 import 'package:avilas_manager_app/generic-widgets/A_Animation1.dart';
+import 'package:avilas_manager_app/models/order.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
@@ -29,7 +29,7 @@ class _OrdersState extends State<Orders> with TickerProviderStateMixin {
 
   static const _pageSize = 20;
 
-  final PagingController<int, dynamic> _pagingController =
+  final PagingController<int, Order> _pagingController =
       PagingController(firstPageKey: 0);
 
   List<Map<String, dynamic>> _list = [
@@ -140,81 +140,90 @@ class _OrdersState extends State<Orders> with TickerProviderStateMixin {
   }
 
   Widget _buildOrderList() {
-    return PagedListView<int, dynamic>(
+    return PagedListView<int, Order>(
       pagingController: _pagingController,
-      builderDelegate: PagedChildBuilderDelegate<dynamic>(
-        itemBuilder: (context, item, i) {
-          return InkWell(
-            splashColor: Theme.of(context).accentColor,
-            onTap: () => _setPreview(i),
-            child: Card(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Flexible(
+      builderDelegate:
+          PagedChildBuilderDelegate<Order>(itemBuilder: (context, item, i) {
+        return InkWell(
+          splashColor: Theme.of(context).accentColor,
+          onTap: () => _setPreview(i),
+          child: Card(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Flexible(
+                  child: Container(
+                    height: 100,
+                    width: 100,
                     child: FadeInImage.assetNetwork(
                       placeholder: 'assets/images/loading.gif',
-                      image: _list[i]['productImage'],
+                      image: item.public_user != null
+                          ? item.public_user.profile_pic.formats.small.url
+                          : 'https://miro.medium.com/max/1200/1*mk1-6aYaf_Bes1E3Imhc0A.jpeg',
                       imageScale: 10,
+                      fit: BoxFit.cover,
                     ),
                   ),
-                  Flexible(
-                    child: Column(
-                      children: [
-                        Container(
-                          child: Center(
-                            child: Text(_list[i]['customer']),
-                          ),
+                ),
+                Flexible(
+                  child: Column(
+                    children: [
+                      Container(
+                        child: Center(
+                          child: Text(item.public_user.full_name ?? 'No name'),
                         ),
-                        Container(
-                          child: Center(
-                            child: Text(_list[i]['product']),
-                          ),
-                        ),
-                        Container(
-                          child: Center(
-                            child: Text(_list[i]['qty']),
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                  SizedBox(
-                    width: 10,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        border: Border.all(),
                       ),
+                      Container(
+                        child: Center(
+                          child:
+                              Text(item.public_user.phone_number ?? 'No phone'),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  width: 10,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(),
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(right: 20),
-                    child: Column(
-                      children: [
-                        Container(
-                          child: Center(
-                            child: Text(_list[i]['orderedAt']),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(right: 20),
+                  child: Column(
+                    children: [
+                      Container(
+                        child: Center(
+                          child: Text(
+                            item.ordered_at != null
+                                ? DateFormat.yMMMEd().format(
+                                    DateTime.parse(item.ordered_at),
+                                  )
+                                : '--',
                           ),
                         ),
-                        Container(
-                          child: Center(
-                            child: Text(_list[i]['shop']),
-                          ),
+                      ),
+                      Container(
+                        child: Center(
+                          child: Text('Ordered at: ' +
+                              (item.is_shop_products ? 'SHOP' : 'PUBLIC')),
                         ),
-                        Container(
-                          child: Center(
-                            child: Text(_list[i]['place']),
-                          ),
-                        )
-                      ],
-                    ),
+                      ),
+                      Container(
+                        child: Center(
+                          child: Text('Place: TODO'),
+                        ),
+                      )
+                    ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          );
-        }
-      ),
+          ),
+        );
+      }),
     );
   }
 
