@@ -12,7 +12,6 @@ Future<List<Order>> getOrders(
   int limit,
 ) async {
   Http http = new Http();
-
   Response response = await http.get(
       url: 'managers/${UserData.manager.id}/orders?_start=$start&_limit=$limit',
       context: context,

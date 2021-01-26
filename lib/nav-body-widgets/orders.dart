@@ -18,16 +18,13 @@ class Orders extends StatefulWidget {
 }
 
 class _OrdersState extends State<Orders> with TickerProviderStateMixin {
-  Map _selected;
-  bool _isDelivered = false;
-  bool _isProcessed = false;
-  bool _isDispatched = false;
+  Order _selected;
 
   AnimationController _animationController;
 
   Animation _openPreviewAnimation;
 
-  static const _pageSize = 6;
+  static const _pageSize = 8;
 
   final PagingController<int, Order> _pagingController =
       PagingController(firstPageKey: 0);
@@ -77,61 +74,63 @@ class _OrdersState extends State<Orders> with TickerProviderStateMixin {
   }
 
   Widget _buildOrderList() {
-    return PagedListView<int, Order>(
-      pagingController: _pagingController,
-      builderDelegate:
-          PagedChildBuilderDelegate<Order>(itemBuilder: (context, item, i) {
-        return InkWell(
-          splashColor: Theme.of(context).accentColor,
-          onTap: () => _setPreview(i),
-          child: Card(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Flexible(
-                  child: Container(
-                    height: 100,
-                    width: 100,
-                    child: FadeInImage.assetNetwork(
-                      placeholder: 'assets/images/loading.gif',
-                      image: item.public_user != null
-                          ? item.public_user.profile_pic.formats.small.url
-                          : 'https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg',
-                      imageScale: 10,
-                      fit: BoxFit.cover,
+    return RefreshIndicator(
+      onRefresh: _onRefresh,
+      child: PagedListView<int, Order>(
+        pagingController: _pagingController,
+        builderDelegate:
+            PagedChildBuilderDelegate<Order>(itemBuilder: (context, item, i) {
+          return InkWell(
+            splashColor: Theme.of(context).accentColor,
+            onTap: () => _setPreview(i),
+            child: Card(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Flexible(
+                    child: Container(
+                      height: 100,
+                      width: 100,
+                      child: FadeInImage.assetNetwork(
+                        placeholder: 'assets/images/loading.gif',
+                        image: item.public_user != null
+                            ? item.public_user.profile_pic.formats.small.url
+                            : 'https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg',
+                        imageScale: 10,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
-                ),
-                Flexible(
-                  flex: 2,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Container(
-                        child: Center(
-                          child: Text(item.public_user?.full_name ?? '--'),
+                  Flexible(
+                    flex: 2,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Container(
+                          child: Center(
+                            child: Text(item.public_user?.full_name ?? '--'),
+                          ),
                         ),
-                      ),
-                      Container(
-                        child: Center(
-                          child:
-                              Text(item.public_user?.phone_number ?? '--'),
+                        Container(
+                          child: Center(
+                            child: Text(item.public_user?.phone_number ?? '--'),
+                          ),
                         ),
-                      ),
-                      Container(
-                        child: Center(
-                          child:
-                          Text('Place: ${item.public_user?.place?.title ?? '--'}'),
+                        Container(
+                          child: Center(
+                            child: Text(
+                                'Place: ${item.public_user?.place?.title ?? '--'}'),
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        );
-      }),
+          );
+        }),
+      ),
     );
   }
 
@@ -142,12 +141,14 @@ class _OrdersState extends State<Orders> with TickerProviderStateMixin {
         children: [
           Flexible(
             flex: 1,
-            child: AspectRatio(
-              aspectRatio: 1,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
               child: FadeInImage.assetNetwork(
                 placeholder: 'assets/images/loading.gif',
-                image: _selected['productImage'],
-                imageScale: 10,
+                image: _selected
+                        .public_user?.profile_pic?.formats?.thumbnail?.url ??
+                    'https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg',
+                fit: BoxFit.cover,
               ),
             ),
           ),
@@ -157,10 +158,12 @@ class _OrdersState extends State<Orders> with TickerProviderStateMixin {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(_selected['customer']),
-                Text(_selected['product']),
-                Text('From: ' + _selected['shop']),
-                Text('To: ' + _selected['place']),
+                Text(_selected.public_user?.full_name ?? '--'),
+                Text('To: ' + _selected.public_user?.place?.title ?? '--'),
+                Text(
+                  'From: ' + _getOrderChildrenShopOrPublic(),
+                  textAlign: TextAlign.center,
+                ),
                 RaisedButton(
                   color: Theme.of(context).buttonColor,
                   onPressed: () {
@@ -178,10 +181,10 @@ class _OrdersState extends State<Orders> with TickerProviderStateMixin {
                   children: [
                     Text('Processed'),
                     Switch(
-                      value: _isProcessed,
+                      value: _selected.is_processed,
                       onChanged: (value) {
                         setState(() {
-                          _isProcessed = value;
+                          _selected.is_processed = value;
                         });
                       },
                     )
@@ -192,10 +195,10 @@ class _OrdersState extends State<Orders> with TickerProviderStateMixin {
                   children: [
                     Text('Dispatched'),
                     Switch(
-                      value: _isDispatched,
+                      value: _selected.is_dispatched,
                       onChanged: (value) {
                         setState(() {
-                          _isDispatched = value;
+                          _selected.is_dispatched = value;
                         });
                       },
                     )
@@ -206,10 +209,10 @@ class _OrdersState extends State<Orders> with TickerProviderStateMixin {
                   children: [
                     Text('Delivered'),
                     Switch(
-                      value: _isDelivered,
+                      value: _selected.is_delivered,
                       onChanged: (value) {
                         setState(() {
-                          _isDelivered = value;
+                          _selected.is_delivered = value;
                         });
                       },
                     )
@@ -226,10 +229,7 @@ class _OrdersState extends State<Orders> with TickerProviderStateMixin {
   Future<void> _fetchPage(int pageKey) async {
     try {
       final newItems = await getOrders(
-        context,
-        _pagingController.itemList?.length ?? 0,
-        _pageSize
-      );
+          context, _pagingController.itemList?.length ?? 0, _pageSize);
       final isLastPage = newItems.length < _pageSize;
       if (isLastPage) {
         _pagingController.appendLastPage(newItems);
@@ -246,12 +246,29 @@ class _OrdersState extends State<Orders> with TickerProviderStateMixin {
   void _setPreview(int i) {
     _animationController.forward();
     setState(() {
-      // _selected = _list[i];
+      _selected = _pagingController.itemList[i];
     });
     showBottomSheet(
       context: context,
       builder: (_) => _buildSelectPreView(),
     );
+  }
+
+  Future<void> _onRefresh() async {
+    _pagingController.refresh();
+  }
+
+  String _getOrderChildrenShopOrPublic() {
+    String from = '';
+    for (int i = 0; i < _selected?.order_children?.length ?? 0; i++) {
+      if (_selected?.order_children[i]?.public_user != null) {
+        from +=
+            _selected.order_children[i].public_user.full_name + '(PUBLIC), ';
+      } else {
+        from += _selected.order_children[i].shop_user.shop_name + '(SHOP), ';
+      }
+    }
+    return from;
   }
 
   @override

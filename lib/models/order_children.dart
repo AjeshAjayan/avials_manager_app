@@ -1,26 +1,26 @@
+import 'package:avilas_manager_app/models/public_user.dart';
+import 'package:avilas_manager_app/models/public_user_int_place.dart';
+import 'package:avilas_manager_app/models/shop_user.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-part 'order_child.g.dart';
+part 'order_children.g.dart';
 
 @JsonSerializable()
 class OrderChild {
   OrderChild(
-    this.public_user,
-    this.order,
     this.id,
-    this.created_at,
     this.published_at,
+    this.created_at,
     this.updated_at,
+    this.order,
     this.is_processed,
     this.is_dispatched,
     this.is_delivered,
-    this.product,
-    this.shop_product,
+    this.public_user,
     this.shop_user,
   );
 
   int id;
-  dynamic shop_product;
   String published_at;
   String created_at;
   String updated_at;
@@ -28,11 +28,11 @@ class OrderChild {
   bool is_processed;
   bool is_dispatched;
   bool is_delivered;
-  int product;
-  int public_user;
-  dynamic shop_user;
+  PublicUserIntPlace public_user;
+  ShopUser shop_user;
 
-  factory OrderChild.fromJson(Map<String, dynamic> json) => _$OrderChildFromJson(json);
+  factory OrderChild.fromJson(Map<String, dynamic> json) =>
+      _$OrderChildFromJson(json);
 
   Map<String, dynamic> toJson() => _$OrderChildToJson(this);
 }

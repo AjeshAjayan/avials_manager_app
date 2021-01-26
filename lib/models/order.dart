@@ -1,3 +1,4 @@
+import 'package:avilas_manager_app/models/order_children.dart';
 import 'package:avilas_manager_app/models/public_user.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -16,10 +17,10 @@ class Order {
     this.updated_at,
     this.public_user,
     this.ordered_at,
+    this.order_children,
   );
 
   int id;
-
   bool is_delivered;
   bool is_processed;
   bool is_dispatched;
@@ -29,6 +30,7 @@ class Order {
   bool is_shop_products;
   PublicUser public_user;
   String ordered_at;
+  List<OrderChild> order_children;
 
   factory Order.fromJson(Map<String, dynamic> json) => _$OrderFromJson(json);
 

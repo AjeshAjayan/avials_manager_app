@@ -20,6 +20,10 @@ Order _$OrderFromJson(Map<String, dynamic> json) {
         ? null
         : PublicUser.fromJson(json['public_user'] as Map<String, dynamic>),
     json['ordered_at'] as String,
+    (json['order_children'] as List)
+        ?.map((e) =>
+            e == null ? null : OrderChild.fromJson(e as Map<String, dynamic>))
+        ?.toList(),
   );
 }
 
@@ -34,4 +38,5 @@ Map<String, dynamic> _$OrderToJson(Order instance) => <String, dynamic>{
       'is_shop_products': instance.is_shop_products,
       'public_user': instance.public_user,
       'ordered_at': instance.ordered_at,
+      'order_children': instance.order_children,
     };

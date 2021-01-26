@@ -1,13 +1,11 @@
 import 'package:avilas_manager_app/models/image_format.dart';
-import 'package:avilas_manager_app/models/place.dart';
 import 'package:avilas_manager_app/models/user.dart';
 import 'package:json_annotation/json_annotation.dart';
-
-part 'public_user.g.dart';
+part 'public_user_int_place.g.dart';
 
 @JsonSerializable()
-class PublicUser {
-  PublicUser(
+class PublicUserIntPlace {
+  PublicUserIntPlace(
     this.updated_at,
     this.published_at,
     this.created_at,
@@ -26,7 +24,7 @@ class PublicUser {
   int id;
   String full_name;
   String phone_number;
-  Place place;
+  int place;
   String date_of_join;
   User users_permissions_user;
   bool is_blocked;
@@ -37,7 +35,8 @@ class PublicUser {
   int order;
   ImageFormat profile_pic;
 
-  factory PublicUser.fromJson(Map<String, dynamic> json) => _$PublicUserFromJson(json);
+  factory PublicUserIntPlace.fromJson(Map<String, dynamic> json) =>
+      _$PublicUserIntPlaceFromJson(json);
 
-  Map<String, dynamic> toJson() => _$PublicUserToJson(this);
+  Map<String, dynamic> toJson() => _$PublicUserIntPlaceToJson(this);
 }
