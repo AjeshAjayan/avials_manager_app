@@ -27,73 +27,10 @@ class _OrdersState extends State<Orders> with TickerProviderStateMixin {
 
   Animation _openPreviewAnimation;
 
-  static const _pageSize = 20;
+  static const _pageSize = 6;
 
   final PagingController<int, Order> _pagingController =
       PagingController(firstPageKey: 0);
-
-  List<Map<String, dynamic>> _list = [
-    {
-      'customer': 'CUS ONE',
-      'product': 'PROD ONE',
-      'productImage':
-          'https://hbr.org/resources/images/article_assets/2019/11/Nov19_14_sb10067951dd-001.jpg',
-      'qty': '10',
-      'orderedAt': '5/1/2021',
-      'shop': 'SHOP ONE',
-      'place': 'PLACE ONE',
-    },
-    {
-      'customer': 'CUS ONE',
-      'product': 'PROD ONE',
-      'productImage':
-          'https://hbr.org/resources/images/article_assets/2019/11/Nov19_14_sb10067951dd-001.jpg',
-      'qty': '10',
-      'orderedAt': '5/1/2021',
-      'shop': 'SHOP ONE',
-      'place': 'PLACE ONE',
-    },
-    {
-      'customer': 'CUS ONE',
-      'product': 'PROD ONE',
-      'productImage':
-          'https://hbr.org/resources/images/article_assets/2019/11/Nov19_14_sb10067951dd-001.jpg',
-      'qty': '10',
-      'orderedAt': '5/1/2021',
-      'shop': 'SHOP ONE',
-      'place': 'PLACE ONE',
-    },
-    {
-      'customer': 'CUS ONE',
-      'product': 'PROD ONE',
-      'productImage':
-          'https://hbr.org/resources/images/article_assets/2019/11/Nov19_14_sb10067951dd-001.jpg',
-      'qty': '10',
-      'orderedAt': '5/1/2021',
-      'shop': 'SHOP ONE',
-      'place': 'PLACE ONE',
-    },
-    {
-      'customer': 'CUS ONE',
-      'product': 'PROD ONE',
-      'productImage':
-          'https://hbr.org/resources/images/article_assets/2019/11/Nov19_14_sb10067951dd-001.jpg',
-      'qty': '10',
-      'orderedAt': '5/1/2021',
-      'shop': 'SHOP ONE',
-      'place': 'PLACE ONE',
-    },
-    {
-      'customer': 'CUS ONE',
-      'product': 'PROD ONE',
-      'productImage':
-          'https://hbr.org/resources/images/article_assets/2019/11/Nov19_14_sb10067951dd-001.jpg',
-      'qty': '10',
-      'orderedAt': '5/1/2021',
-      'shop': 'SHOP ONE',
-      'place': 'PLACE ONE',
-    }
-  ];
 
   @override
   void initState() {
@@ -159,63 +96,34 @@ class _OrdersState extends State<Orders> with TickerProviderStateMixin {
                       placeholder: 'assets/images/loading.gif',
                       image: item.public_user != null
                           ? item.public_user.profile_pic.formats.small.url
-                          : 'https://miro.medium.com/max/1200/1*mk1-6aYaf_Bes1E3Imhc0A.jpeg',
+                          : 'https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg',
                       imageScale: 10,
                       fit: BoxFit.cover,
                     ),
                   ),
                 ),
                 Flexible(
+                  flex: 2,
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Container(
                         child: Center(
-                          child: Text(item.public_user.full_name ?? 'No name'),
+                          child: Text(item.public_user?.full_name ?? '--'),
                         ),
                       ),
                       Container(
                         child: Center(
                           child:
-                              Text(item.public_user.phone_number ?? 'No phone'),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  width: 10,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(right: 20),
-                  child: Column(
-                    children: [
-                      Container(
-                        child: Center(
-                          child: Text(
-                            item.ordered_at != null
-                                ? DateFormat.yMMMEd().format(
-                                    DateTime.parse(item.ordered_at),
-                                  )
-                                : '--',
-                          ),
+                              Text(item.public_user?.phone_number ?? '--'),
                         ),
                       ),
                       Container(
                         child: Center(
-                          child: Text('Ordered at: ' +
-                              (item.is_shop_products ? 'SHOP' : 'PUBLIC')),
+                          child:
+                          Text('Place: ${item.public_user?.place?.title ?? '--'}'),
                         ),
                       ),
-                      Container(
-                        child: Center(
-                          child: Text('Place: TODO'),
-                        ),
-                      )
                     ],
                   ),
                 ),
@@ -317,7 +225,11 @@ class _OrdersState extends State<Orders> with TickerProviderStateMixin {
 
   Future<void> _fetchPage(int pageKey) async {
     try {
-      final newItems = await getOrders(context);
+      final newItems = await getOrders(
+        context,
+        _pagingController.itemList?.length ?? 0,
+        _pageSize
+      );
       final isLastPage = newItems.length < _pageSize;
       if (isLastPage) {
         _pagingController.appendLastPage(newItems);
@@ -334,7 +246,7 @@ class _OrdersState extends State<Orders> with TickerProviderStateMixin {
   void _setPreview(int i) {
     _animationController.forward();
     setState(() {
-      _selected = _list[i];
+      // _selected = _list[i];
     });
     showBottomSheet(
       context: context,
@@ -345,6 +257,7 @@ class _OrdersState extends State<Orders> with TickerProviderStateMixin {
   @override
   void dispose() {
     _animationController.dispose();
+    _pagingController.dispose();
     super.dispose();
   }
 }

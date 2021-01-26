@@ -1,5 +1,6 @@
 import 'package:avilas_manager_app/models/image.dart';
 import 'package:avilas_manager_app/models/image_format.dart';
+import 'package:avilas_manager_app/models/place.dart';
 import 'package:avilas_manager_app/models/user.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -26,7 +27,7 @@ class PublicUser {
   int id;
   String full_name;
   String phone_number;
-  int place;
+  Place place;
   String date_of_join;
   User users_permissions_user;
   bool is_blocked;

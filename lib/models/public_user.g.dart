@@ -15,7 +15,9 @@ PublicUser _$PublicUserFromJson(Map<String, dynamic> json) {
     json['users_permissions_user'] == null
         ? null
         : User.fromJson(json['users_permissions_user'] as Map<String, dynamic>),
-    json['place'] as int,
+    json['place'] == null
+        ? null
+        : Place.fromJson(json['place'] as Map<String, dynamic>),
     json['date_of_join'] as String,
     json['full_name'] as String,
     json['is_blocked'] as bool,

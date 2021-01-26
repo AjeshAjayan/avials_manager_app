@@ -21,12 +21,13 @@ class Http {
 
   void _toLogin(http.Response response, context) {
     if (response.statusCode == HttpStatus.forbidden) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (_) => LoginScreen(),
-        ),
-      );
+      print("FORBIDEN");
+      // Navigator.pushReplacement(
+      //   context,
+      //   MaterialPageRoute(
+      //     builder: (_) => LoginScreen(),
+      //   ),
+      // );
     }
 
     return;
