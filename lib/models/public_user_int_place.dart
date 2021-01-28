@@ -4,7 +4,7 @@ import 'package:json_annotation/json_annotation.dart';
 part 'public_user_int_place.g.dart';
 
 @JsonSerializable()
-class PublicUserIntPlace {
+class PublicUserIntPlace<T> {
   PublicUserIntPlace(
     this.updated_at,
     this.published_at,

@@ -1,8 +1,9 @@
-import 'package:intl/intl.dart';
+import 'package:avilas_manager_app/apis/set_order_status.dart';
 import 'package:avilas_manager_app/apis/get_orders.dart';
 import 'package:avilas_manager_app/avials-manager-theme.dart';
 import 'package:avilas_manager_app/generic-widgets/A_Animation1.dart';
 import 'package:avilas_manager_app/models/order.dart';
+import 'package:avilas_manager_app/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
@@ -135,95 +136,136 @@ class _OrdersState extends State<Orders> with TickerProviderStateMixin {
   }
 
   Widget _buildSelectPreView() {
-    return Card(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Flexible(
-            flex: 1,
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: FadeInImage.assetNetwork(
-                placeholder: 'assets/images/loading.gif',
-                image: _selected
-                        .public_user?.profile_pic?.formats?.thumbnail?.url ??
-                    'https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg',
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
-          SizedBox(width: 20),
-          Flexible(
-            flex: 2,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+    return StatefulBuilder(
+      builder: (BuildContext context, StateSetter stateSetter) => Card(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(_selected.public_user?.full_name ?? '--'),
-                Text('To: ' + _selected.public_user?.place?.title ?? '--'),
-                Text(
-                  'From: ' + _getOrderChildrenShopOrPublic(),
-                  textAlign: TextAlign.center,
+                Flexible(
+                  flex: 1,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: FadeInImage.assetNetwork(
+                      placeholder: 'assets/images/loading.gif',
+                      image: _selected.public_user?.profile_pic?.formats
+                              ?.thumbnail?.url ??
+                          'https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg',
+                      fit: BoxFit.cover,
+                    ),
+                  ),
                 ),
-                RaisedButton(
-                  color: Theme.of(context).buttonColor,
-                  onPressed: () {
-                    showDialog(
-                        context: context,
-                        builder: (_) =>
-                            AvialsManagerTheme.buildOnDevelopmentAlert(
-                                context));
-                  },
-                  child: Text('Directions'),
-                ),
-                Divider(),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text('Processed'),
-                    Switch(
-                      value: _selected.is_processed,
-                      onChanged: (value) {
-                        setState(() {
-                          _selected.is_processed = value;
-                        });
-                      },
-                    )
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text('Dispatched'),
-                    Switch(
-                      value: _selected.is_dispatched,
-                      onChanged: (value) {
-                        setState(() {
-                          _selected.is_dispatched = value;
-                        });
-                      },
-                    )
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text('Delivered'),
-                    Switch(
-                      value: _selected.is_delivered,
-                      onChanged: (value) {
-                        setState(() {
-                          _selected.is_delivered = value;
-                        });
-                      },
-                    )
-                  ],
+                SizedBox(width: 20),
+                Flexible(
+                  flex: 2,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(_selected.public_user?.full_name ?? '--'),
+                      Text('To: ' + _selected.public_user?.place?.title ?? '--'),
+                      Text(
+                        'From: ' + _getOrderChildrenShopOrPublic(),
+                        textAlign: TextAlign.center,
+                      ),
+                      RaisedButton(
+                        color: Theme.of(context).buttonColor,
+                        onPressed: () {
+                          showDialog(
+                              context: context,
+                              builder: (_) =>
+                                  AvialsManagerTheme.buildOnDevelopmentAlert(
+                                      context));
+                        },
+                        child: Text('Directions'),
+                      ),
+                      Divider(),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text('Processed'),
+                          Switch(
+                            value: _selected.is_processed,
+                            onChanged: (value) {
+                              stateSetter(() {
+                                _selected.is_processed = value;
+                              });
+                            },
+                          )
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text('Dispatched'),
+                          Switch(
+                            value: _selected.is_dispatched,
+                            onChanged: (value) {
+                              stateSetter(() {
+                                _selected.is_dispatched = value;
+                              });
+                            },
+                          )
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text('Delivered'),
+                          Switch(
+                            value: _selected.is_delivered,
+                            onChanged: (value) {
+                              stateSetter(() {
+                                _selected.is_delivered = value;
+                              });
+                            },
+                          )
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
-          ),
-        ],
+            Flexible(
+              child: RaisedButton(
+                color: Theme.of(context).buttonColor,
+                child: FractionallySizedBox(
+                  widthFactor: 0.4,
+                  child: Row(
+                    children: [
+                      Flexible(
+                        fit: FlexFit.tight,
+                        child: Icon(Icons.save),
+                      ),
+                      Flexible(
+                        fit: FlexFit.tight,
+                        child: Text('Save'),
+                      ),
+                    ],
+                  ),
+                ),
+                onPressed: _onSave,
+              ),
+            ),
+          ],
+        ),
       ),
     );
+  }
+
+  Future<void> _onSave() async {
+    Navigator.pop(context);
+    MyHomePage.showLoading.value = true;
+
+    await setOrderStatus(
+      context: context,
+      id: _selected.id,
+      order: _selected,
+    );
+
+    MyHomePage.showLoading.value = false;
   }
 
   Future<void> _fetchPage(int pageKey) async {
@@ -244,13 +286,14 @@ class _OrdersState extends State<Orders> with TickerProviderStateMixin {
   }
 
   void _setPreview(int i) {
-    _animationController.forward();
     setState(() {
       _selected = _pagingController.itemList[i];
     });
     showBottomSheet(
       context: context,
-      builder: (_) => _buildSelectPreView(),
+      builder: (_) => _buildSelectPreView(
+
+      ),
     );
   }
 
