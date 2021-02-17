@@ -13,7 +13,6 @@ import 'models/manager.dart';
 void main() async {
   await DotEnv.load(fileName: ".env");
   FlutterSecureStorage storage = new FlutterSecureStorage();
-  // await storage.delete(key: 'accessToken');
   UserData.manager = Manager.fromJson(jsonDecode(await storage.read(key: 'userData')));
   Widget home = await storage.read(key: 'accessToken') == null ? LoginScreen() : MyHomePage();
   runApp(HomeScreen(home));

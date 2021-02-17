@@ -5,6 +5,7 @@ import 'package:avilas_manager_app/avials-manager-theme.dart';
 import 'package:avilas_manager_app/data_keepers/user_data.dart';
 import 'package:avilas_manager_app/generic-widgets/A_Animation1.dart';
 import 'package:avilas_manager_app/models/manager.dart';
+import 'package:avilas_manager_app/screens/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
@@ -19,7 +20,6 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
-
   Manager _user;
   final FlutterSecureStorage _storage = new FlutterSecureStorage();
 
@@ -55,16 +55,25 @@ class _ProfileState extends State<Profile> {
                         backgroundColor: AvialsManagerTheme.secondaryBg,
                         radius: 50,
                         backgroundImage: FadeInImage.assetNetwork(
-                          placeholder: AvialsManagerTheme.imageLoadingPlaceHolder,
-                          image: _user.profile_pic?.formats?.thumbnail?.url ?? '',
+                          placeholder:
+                              AvialsManagerTheme.imageLoadingPlaceHolder,
+                          image:
+                              _user.profile_pic?.formats?.thumbnail?.url ?? '',
                         ).image,
                       ),
                     ),
                     _buildCardView(_user.fullname, const Icon(Icons.person)),
-                    _buildCardView(_user.place.title, const Icon(Icons.location_on)),
-                    _buildCardView('DOB: ' + DateFormat.yMMMEd().format(DateTime.parse(_user.date_of_birth)),
+                    _buildCardView(
+                        _user.place.title, const Icon(Icons.location_on)),
+                    _buildCardView(
+                        'DOB: ' +
+                            DateFormat.yMMMEd()
+                                .format(DateTime.parse(_user.date_of_birth)),
                         const Icon(Icons.calendar_today)),
-                    _buildCardView('DOJ: ' + DateFormat.yMMMEd().format(DateTime.parse(_user.date_of_joining)),
+                    _buildCardView(
+                        'DOJ: ' +
+                            DateFormat.yMMMEd()
+                                .format(DateTime.parse(_user.date_of_joining)),
                         const Icon(Icons.calendar_today)),
                     _buildCardView(
                       _user.is_verified ? 'Verified' : 'Not Verified',
@@ -73,6 +82,33 @@ class _ProfileState extends State<Profile> {
                     _buildCardView(
                       'Assigned places:\n' + _joinPlaceNames(),
                       const Icon(Icons.place_outlined),
+                    ),
+                    InkWell(
+                      splashColor: Theme.of(context).accentColor,
+                      onTap: _logout,
+                      child: Card(
+                        child: Padding(
+                          padding: const EdgeInsets.all(15),
+                          child: Row(
+                            children: [
+                              Flexible(
+                                flex: 1,
+                                fit: FlexFit.tight,
+                                child: const Icon(Icons.logout),
+                              ),
+                              Flexible(
+                                flex: 5,
+                                fit: FlexFit.tight,
+                                child: Text(
+                                  'Log out',
+                                  style: AvialsManagerTheme
+                                      .theme.textTheme.headline1,
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -108,15 +144,20 @@ class _ProfileState extends State<Profile> {
 
   _joinPlaceNames() {
     String placeNames = '';
-    for(int i = 0; i < UserData.manager.places.length; i ++) {
+    for (int i = 0; i < UserData.manager.places.length; i++) {
       placeNames = placeNames + '${UserData.manager.places[i].title ?? ''}, ';
     }
     return placeNames;
   }
 
-  Future<void> _getUserInfo () async {
+  Future<void> _getUserInfo() async {
     Manager user = await getUserInfo(_user.users_permissions_user.id, context);
     await _storage.write(key: 'userData', value: jsonEncode(user.toJson()));
     setState(() => _user = user);
+  }
+
+  Future<void> _logout() async {
+    await _storage.delete(key: 'accessToken');
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => LoginScreen()));
   }
 }
