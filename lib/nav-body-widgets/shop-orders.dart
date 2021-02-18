@@ -1,5 +1,6 @@
 import 'package:avilas_manager_app/avials-manager-theme.dart';
 import 'package:avilas_manager_app/generic-widgets/A_Animation1.dart';
+import 'package:avilas_manager_app/models/index.dart';
 import 'package:avilas_manager_app/nav-body-widgets/shop-details.dart';
 import 'package:avilas_manager_app/screens/home_screen.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +9,7 @@ import 'package:flutter/widgets.dart';
 
 class ShopOrders extends StatefulWidget {
   final Animation animation;
-  final Map<String, dynamic> shopDetails;
+  final ShopUserList shopDetails;
 
   ShopOrders({this.animation, this.shopDetails});
 
@@ -115,7 +116,7 @@ class _ShopOrdersState extends State<ShopOrders> with TickerProviderStateMixin {
             children: [
               AvialsManagerTheme.buildBodyHeaderWithBackButton(
                 context,
-                'Orders (${widget.shopDetails['shop_name'] ?? ''})',
+                'Orders (${widget.shopDetails.shopName ?? ''})',
                 Icon(Icons.shopping_bag_outlined),
                 _backButtonCallBack,
               ),

@@ -1,7 +1,8 @@
+import 'package:avilas_manager_app/apis/get_shop_list.dart';
 import 'package:avilas_manager_app/avials-manager-theme.dart';
 import 'package:avilas_manager_app/generic-widgets/A_Animation1.dart';
+import 'package:avilas_manager_app/models/index.dart';
 import 'package:avilas_manager_app/nav-body-widgets/shop-details.dart';
-import 'package:avilas_manager_app/nav-body-widgets/shop-products.dart';
 import 'package:avilas_manager_app/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -14,42 +15,23 @@ class Shops extends StatefulWidget {
 }
 
 class _ShopsState extends State<Shops> {
-  List<Map<String, dynamic>> _list = [
-    {
-      'shop_name': 'SHOP ONE',
-      'date_of_join': '5/12/2020',
-      'shop_image':
-          'https://hbr.org/resources/images/article_assets/2019/11/Nov19_14_sb10067951dd-001.jpg',
-      'is_expired': false,
-      'is_closed': false,
-    },
-    {
-      'shop_name': 'SHOP TWO',
-      'date_of_join': '5/12/2020',
-      'shop_image':
-          'https://hbr.org/resources/images/article_assets/2019/11/Nov19_14_sb10067951dd-001.jpg',
-      'is_expired': false,
-      'is_closed': false,
-    },
-    {
-      'shop_name': 'SHOP TWO',
-      'date_of_join': '5/12/2020',
-      'shop_image':
-          'https://hbr.org/resources/images/article_assets/2019/11/Nov19_14_sb10067951dd-001.jpg',
-      'is_expired': false,
-      'is_closed': false,
-    },
-    {
-      'shop_name': 'SHOP FOUR',
-      'date_of_join': '5/12/2020',
-      'shop_image':
-          'https://hbr.org/resources/images/article_assets/2019/11/Nov19_14_sb10067951dd-001.jpg',
-      'is_expired': false,
-      'is_closed': false,
-    },
-  ];
+  List<ShopUserList> _list = [];
 
-  void _shopOnTap(Map<String, dynamic> shopDetails) {
+  @override
+  void initState() {
+    _fetchShops();
+    super.initState();
+  }
+
+  Future<void> _fetchShops() async {
+    /// get shops by manager assigned places
+    final list = await getShopUserList(context: context);
+    setState(()  {
+      _list = list;
+    });
+  }
+
+  void _shopOnTap(ShopUserList shopDetails) {
     MyHomePage.navBodyChange.value = ShopDetails(
       animation: widget.animation,
       shopDetails: shopDetails,
@@ -69,11 +51,13 @@ class _ShopsState extends State<Shops> {
                 children: [
                   Flexible(
                     child: Container(
-                      padding: EdgeInsets.all(5),
+                      height: 100,
+                      width: 100,
                       child: FadeInImage.assetNetwork(
                         placeholder: 'assets/images/loading.gif',
-                        image: _list[i]['shop_image'],
+                        image: _list[i].shopImage.formats.thumbnail.url,
                         imageScale: 10,
+                        fit: BoxFit.cover,
                       ),
                     ),
                   ),
@@ -82,7 +66,7 @@ class _ShopsState extends State<Shops> {
                       children: [
                         Container(
                           child: Center(
-                            child: Text(_list[i]['shop_name']),
+                            child: Text(_list[i].shopName),
                           ),
                         ),
                       ],
@@ -102,7 +86,7 @@ class _ShopsState extends State<Shops> {
                       children: [
                         Container(
                           child: Center(
-                            child: Text(_list[i]['date_of_join']),
+                            child: Text(_list[i].dateOfJoin),
                           ),
                         ),
                       ],

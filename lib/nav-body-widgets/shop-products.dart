@@ -1,5 +1,6 @@
 import 'package:avilas_manager_app/avials-manager-theme.dart';
 import 'package:avilas_manager_app/generic-widgets/A_Animation1.dart';
+import 'package:avilas_manager_app/models/index.dart';
 import 'package:avilas_manager_app/nav-body-widgets/shop-details.dart';
 import 'package:avilas_manager_app/nav-body-widgets/shop-product-details.dart';
 import 'package:avilas_manager_app/nav-body-widgets/shops.dart';
@@ -8,7 +9,7 @@ import 'package:flutter/material.dart';
 
 class ShopProducts extends StatefulWidget {
   final Animation animation;
-  final Map<String, dynamic> shopDetails;
+  final ShopUserList shopDetails;
 
   ShopProducts({this.animation, this.shopDetails});
   @override

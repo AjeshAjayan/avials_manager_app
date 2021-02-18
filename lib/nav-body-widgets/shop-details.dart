@@ -1,5 +1,6 @@
 import 'package:avilas_manager_app/avials-manager-theme.dart';
 import 'package:avilas_manager_app/generic-widgets/A_Animation1.dart';
+import 'package:avilas_manager_app/models/index.dart';
 import 'package:avilas_manager_app/nav-body-widgets/shop-orders.dart';
 import 'package:avilas_manager_app/nav-body-widgets/shop-products.dart';
 import 'package:avilas_manager_app/nav-body-widgets/shops.dart';
@@ -8,7 +9,7 @@ import 'package:flutter/material.dart';
 
 class ShopDetails extends StatefulWidget {
   final Animation animation;
-  final Map<String, dynamic> shopDetails;
+  final ShopUserList shopDetails;
 
   ShopDetails({this.animation, this.shopDetails});
   @override
@@ -80,7 +81,7 @@ class _ShopDetailsState extends State<ShopDetails> {
                             flexibleSpace: FlexibleSpaceBar(
                               centerTitle: true,
                               title: Text(
-                                widget.shopDetails['shop_name'],
+                                widget.shopDetails.shopName,
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 16.0,

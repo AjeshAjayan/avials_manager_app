@@ -6,8 +6,9 @@ part of 'public_user_int_place.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-PublicUserIntPlace _$PublicUserIntPlaceFromJson(Map<String, dynamic> json) {
-  return PublicUserIntPlace(
+PublicUserIntPlace<T> _$PublicUserIntPlaceFromJson<T>(
+    Map<String, dynamic> json) {
+  return PublicUserIntPlace<T>(
     json['updated_at'] as String,
     json['published_at'] as String,
     json['created_at'] as String,
@@ -28,7 +29,8 @@ PublicUserIntPlace _$PublicUserIntPlaceFromJson(Map<String, dynamic> json) {
   );
 }
 
-Map<String, dynamic> _$PublicUserIntPlaceToJson(PublicUserIntPlace instance) =>
+Map<String, dynamic> _$PublicUserIntPlaceToJson<T>(
+        PublicUserIntPlace<T> instance) =>
     <String, dynamic>{
       'id': instance.id,
       'full_name': instance.full_name,

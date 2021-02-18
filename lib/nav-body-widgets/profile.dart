@@ -21,11 +21,15 @@ class Profile extends StatefulWidget {
 
 class _ProfileState extends State<Profile> {
   Manager _user;
+  String _assignedPlaces = '';
   final FlutterSecureStorage _storage = new FlutterSecureStorage();
 
   @override
   void initState() {
     _user = UserData.manager;
+    setState(() {
+      _assignedPlaces = _joinPlaceNames();
+    });
     super.initState();
   }
 
@@ -80,7 +84,7 @@ class _ProfileState extends State<Profile> {
                       const Icon(Icons.verified),
                     ),
                     _buildCardView(
-                      'Assigned places:\n' + _joinPlaceNames(),
+                      'Assigned places:\n' + _assignedPlaces,
                       const Icon(Icons.place_outlined),
                     ),
                     InkWell(
@@ -154,6 +158,12 @@ class _ProfileState extends State<Profile> {
     Manager user = await getUserInfo(_user.users_permissions_user.id, context);
     await _storage.write(key: 'userData', value: jsonEncode(user.toJson()));
     setState(() => _user = user);
+
+    UserData.manager.places = user.places;
+
+    setState(() {
+      _assignedPlaces = _joinPlaceNames();
+    });
   }
 
   Future<void> _logout() async {
