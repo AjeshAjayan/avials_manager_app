@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:avilas_manager_app/apis/get_shop_list.dart';
 import 'package:avilas_manager_app/avials-manager-theme.dart';
 import 'package:avilas_manager_app/generic-widgets/A_Animation1.dart';
@@ -5,6 +7,7 @@ import 'package:avilas_manager_app/models/index.dart';
 import 'package:avilas_manager_app/nav-body-widgets/shop-details.dart';
 import 'package:avilas_manager_app/screens/home_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 class Shops extends StatefulWidget {
   final Animation animation;
@@ -15,20 +18,41 @@ class Shops extends StatefulWidget {
 }
 
 class _ShopsState extends State<Shops> {
-  List<ShopUserList> _list = [];
+  static const _pageSize = 10;
+
+  final PagingController<int, ShopUserList> _pagingController =
+  PagingController(firstPageKey: 0);
 
   @override
   void initState() {
-    _fetchShops();
+    _pagingController.addPageRequestListener((pageKey) {
+      _fetchShops(pageKey);
+    });
     super.initState();
   }
 
-  Future<void> _fetchShops() async {
-    /// get shops by manager assigned places
-    final list = await getShopUserList(context: context);
-    setState(()  {
-      _list = list;
-    });
+  Future<void> _fetchShops(int pageKey) async {
+    try {
+      final newItems = await getShopUserList(
+        context: context,
+        start: _pagingController.itemList?.length ?? 0,
+        limit: _pageSize,
+      );
+      final isLastPage = newItems.length < _pageSize;
+      if (isLastPage) {
+        _pagingController.appendLastPage(newItems);
+      } else {
+        final nextPageKey = pageKey + newItems.length;
+        _pagingController.appendPage(newItems, nextPageKey);
+      }
+    } catch (error) {
+      _pagingController.error = error;
+      print(error);
+    }
+  }
+
+  Future<void> _refreshShops() async {
+    _pagingController.refresh();
   }
 
   void _shopOnTap(ShopUserList shopDetails) {
@@ -39,12 +63,13 @@ class _ShopsState extends State<Shops> {
   }
 
   Widget _buildShopList() {
-    return CustomScrollView(slivers: [
-      SliverList(
-        delegate: SliverChildBuilderDelegate((context, i) {
+    return PagedListView<int, ShopUserList>(
+      pagingController: _pagingController,
+      builderDelegate: PagedChildBuilderDelegate<ShopUserList>(
+        itemBuilder: (context, item, index) {
           return InkWell(
             splashColor: Theme.of(context).accentColor,
-            onTap: () => _shopOnTap(_list[i]),
+            onTap: () => _shopOnTap(item),
             child: Card(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -55,7 +80,7 @@ class _ShopsState extends State<Shops> {
                       width: 100,
                       child: FadeInImage.assetNetwork(
                         placeholder: 'assets/images/loading.gif',
-                        image: _list[i].shopImage.formats.thumbnail.url,
+                        image: item.shopImage.formats.thumbnail.url,
                         imageScale: 10,
                         fit: BoxFit.cover,
                       ),
@@ -66,7 +91,7 @@ class _ShopsState extends State<Shops> {
                       children: [
                         Container(
                           child: Center(
-                            child: Text(_list[i].shopName),
+                            child: Text(item.shopName),
                           ),
                         ),
                       ],
@@ -86,7 +111,7 @@ class _ShopsState extends State<Shops> {
                       children: [
                         Container(
                           child: Center(
-                            child: Text(_list[i].dateOfJoin),
+                            child: Text(item.dateOfJoin),
                           ),
                         ),
                       ],
@@ -96,31 +121,40 @@ class _ShopsState extends State<Shops> {
               ),
             ),
           );
-        }, childCount: _list.length),
+        }
       ),
-    ]);
+    );
+  }
+
+  @override
+  void dispose() {
+    _pagingController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return A_Animation1(
       animation: widget.animation,
-      child: Container(
-        child: Center(
-          child: FractionallySizedBox(
-            widthFactor: AvialsManagerTheme.bodyWidthFactor,
-            child: Column(
-              children: [
-                AvialsManagerTheme.buildBodyHeader(
-                  context,
-                  'Shops',
-                  Icon(Icons.store),
-                ),
-                Flexible(
-                  flex: 2,
-                  child: _buildShopList(),
-                )
-              ],
+      child: RefreshIndicator(
+        onRefresh: _refreshShops,
+        child: Container(
+          child: Center(
+            child: FractionallySizedBox(
+              widthFactor: AvialsManagerTheme.bodyWidthFactor,
+              child: Column(
+                children: [
+                  AvialsManagerTheme.buildBodyHeader(
+                    context,
+                    'Shops',
+                    Icon(Icons.store),
+                  ),
+                  Flexible(
+                    flex: 2,
+                    child: _buildShopList(),
+                  )
+                ],
+              ),
             ),
           ),
         ),

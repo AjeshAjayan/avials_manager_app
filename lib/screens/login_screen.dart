@@ -110,44 +110,50 @@ class LoginScreen extends StatelessWidget {
   }
 
   void _login(context) async {
-    MyHomePage.showLoading.value = true;
-    final FormState form = _formKey.currentState;
-    final FlutterSecureStorage storage = new FlutterSecureStorage();
-    if (!form.validate()) {
-      return;
-    }
-    dynamic response = await _http.postNoAuth(url: 'auth/local', body: {
-      'identifier': _formControls['email'].text,
-      'password': _formControls['password'].text,
-    });
-    response = jsonDecode(response.body);
-    if (response['jwt'] != null && response['jwt'] != '') {
-      // get manager's info by user id
-      final userId = response['user']['id'];
-
-      await storage.write(key: 'accessToken', value: response['jwt']);
-
-      var managerRes = await _http.get(
-        url: 'managers/user/$userId',
-        body: {},
-        context: context,
-      );
-
-      Manager manager = Manager.fromJson(jsonDecode(managerRes.body)[0]);
-
-      await storage.write(key: 'userData', value: jsonEncode(manager.toJson()));
-
-      UserData.manager = manager;
-
-      if (FocusScope.of(context).isFirstFocus) {
-        FocusScope.of(context).requestFocus(new FocusNode());
+    try {
+      MyHomePage.showLoading.value = true;
+      final FormState form = _formKey.currentState;
+      final FlutterSecureStorage storage = new FlutterSecureStorage();
+      if (!form.validate()) {
+        return;
       }
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (_) => MyHomePage()));
-    } else {
-      Toster.showToster(
-          context: context, msg: 'Identifier or password invalid invalid');
+      dynamic response = await _http.postNoAuth(url: 'auth/local', body: {
+        'identifier': _formControls['email'].text,
+        'password': _formControls['password'].text,
+      });
+      response = jsonDecode(response.body);
+      if (response['jwt'] != null && response['jwt'] != '') {
+        // get manager's info by user id
+        final userId = response['user']['id'];
+
+        await storage.write(key: 'accessToken', value: response['jwt']);
+
+        var managerRes = await _http.get(
+          url: 'managers/user/$userId',
+          body: {},
+          context: context,
+        );
+
+        print(managerRes.body);
+
+        Manager manager = Manager.fromJson(jsonDecode(managerRes.body)[0] ?? {});
+
+        await storage.write(key: 'userData', value: jsonEncode(manager.toJson()));
+
+        UserData.manager = manager;
+
+        if (FocusScope.of(context).isFirstFocus) {
+          FocusScope.of(context).requestFocus(new FocusNode());
+        }
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (_) => MyHomePage()));
+      } else {
+        Toster.showToster(
+            context: context, msg: 'Identifier or password invalid invalid');
+      }
+      MyHomePage.showLoading.value = false;
+    } catch(e) {
+      print(e);
     }
-    MyHomePage.showLoading.value = false;
   }
 }

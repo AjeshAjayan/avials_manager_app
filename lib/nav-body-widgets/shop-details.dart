@@ -88,7 +88,7 @@ class _ShopDetailsState extends State<ShopDetails> {
                                 ),
                               ),
                               background: Image.network(
-                                'https://images.pexels.com/photos/443356/pexels-photo-443356.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940',
+                                widget.shopDetails.shopCoverImage.formats.small.url,
                                 fit: BoxFit.cover,
                               ),
                             ),
@@ -145,12 +145,12 @@ class _ShopDetailsState extends State<ShopDetails> {
 
     listItems.add(_buildShopDetailsCard(
       Icon(Icons.description),
-      'this is description of shop this is description of shop this is description of shop this is description of shop',
+      widget.shopDetails.aboutShop,
     ));
 
     listItems.add(_buildShopDetailsCard(
       Icon(Icons.location_on),
-      'Kollam',
+      '${widget.shopDetails.place.title} (${widget.shopDetails.place.pincode})',
     ));
 
     listItems.add(_buildShopDetailsCard(
@@ -180,7 +180,7 @@ class _ShopDetailsState extends State<ShopDetails> {
 
     listItems.add(_buildShopDetailsCard(
       Icon(Icons.next_plan),
-      'Plan: Premium',
+      'Plan: ${widget.shopDetails.shopPlan.title}',
     ));
 
     return listItems;

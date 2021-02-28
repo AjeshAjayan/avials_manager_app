@@ -6,10 +6,14 @@ import 'package:avilas_manager_app/models/index.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart';
 
-Future<List<ShopUserList>> getShopUserList({BuildContext context}) async {
+Future<List<ShopUserList>> getShopUserList({
+  BuildContext context,
+  int start,
+  int limit,
+}) async {
   Http http = new Http();
   Response response = await http.get(
-    url: 'managers/${UserData.manager.id}/shops',
+    url: 'managers/${UserData.manager.id}/shops?_start=$start&_limit=$limit',
     context: context,
     body: {},
   );
